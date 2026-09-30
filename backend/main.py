@@ -68,9 +68,25 @@ app.add_middleware(
 
 
 app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"],
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=False,
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+    ],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+    ],
 )
+
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
@@ -89,64 +105,23 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         ] = "camera=(), microphone=(), geolocation=()"
 
         response.headers[
-    "Content-Security-Policy"
-] = (
-    "default-src 'self'; "
-    "script-src 'self'; "
-    "style-src 'self'; "
-    "img-src 'self' data:; "
-    "font-src 'self'; "
-    "connect-src 'self'; "
-    "frame-ancestors 'none'; "
-    "base-uri 'self'; "
-    "form-action 'self'"
-)
+            "Content-Security-Policy"
+        ] = (
+            "default-src 'self'; "
+            "script-src 'self'; "
+            "style-src 'self'; "
+            "img-src 'self' data:; "
+            "font-src 'self'; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "form-action 'self'"
+        )
+
         return response
 
 
 app.add_middleware(SecurityHeadersMiddleware)
-
-# =========================================================
-# REQUEST SIZE LIMIT
-# =========================================================
-
-MAX_REQUEST_SIZE = 2 * 1024 * 1024
-
-
-class RequestSizeMiddleware(BaseHTTPMiddleware):
-
-    async def dispatch(self, request: Request, call_next):
-
-        content_length = request.headers.get("content-length")
-
-        if content_length:
-
-            try:
-
-                if int(content_length) > MAX_REQUEST_SIZE:
-
-                    return JSONResponse(
-                        status_code=413,
-                        content={
-                            "detail": "Request hajmi juda katta"
-                        },
-                    )
-
-            except ValueError:
-
-                return JSONResponse(
-                    status_code=400,
-                    content={
-                        "detail": "Content-Length noto'g'ri"
-                    },
-                )
-
-        return await call_next(request)
-
-
-app.add_middleware(RequestSizeMiddleware)
-
-
 # =========================================================
 # HELPER FUNCTIONS
 # =========================================================
