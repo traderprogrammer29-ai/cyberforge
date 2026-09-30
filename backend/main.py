@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from pydantic import BaseModel
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
@@ -46,25 +46,7 @@ app = FastAPI(
 # MIDDLEWARES
 # =========================================================
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
-    allow_credentials=False,
-    allow_methods=[
-        "GET",
-        "POST",
-        "PUT",
-        "PATCH",
-        "DELETE",
-    ],
-    allow_headers=[
-        "Authorization",
-        "Content-Type",
-    ],
-)
+
 
 
 app.add_middleware(
