@@ -75,42 +75,30 @@ app.add_middleware(
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
 
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = (
+            "camera=(), microphone=(), geolocation=()"
+        )
 
-        response.headers[
-            "Referrer-Policy"
-        ] = "strict-origin-when-cross-origin"
-
-        response.headers[
-            "Permissions-Policy"
-        ] = "camera=(), microphone=(), geolocation=()"
-
-        response.headers[
-            "Content-Security-Policy"
-        ] = (
+        response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
-            "script-src 'self'; "
-            "style-src 'self'; "
+            "script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
+            "style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
             "img-src 'self' data:; "
-            "font-src 'self'; "
+            "font-src 'self' https://cdn.jsdelivr.net; "
             "connect-src 'self'; "
             "frame-ancestors 'none'; "
             "base-uri 'self'; "
             "form-action 'self'"
         )
-
         return response
-
-
 app.add_middleware(SecurityHeadersMiddleware)
-# =========================================================
-# HELPER FUNCTIONS
-# =========================================================
+
 
 def xp_qoshish(
     user: User,
