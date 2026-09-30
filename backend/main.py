@@ -72,6 +72,7 @@ app.add_middleware(
     allowed_hosts=[
         "localhost",
         "127.0.0.1",
+        "cyberforge-1-bii6.onrender.com",
     ],
 )
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
