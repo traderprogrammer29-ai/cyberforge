@@ -47,7 +47,11 @@ app = FastAPI(
 # =========================================================
 
 
-
+@app.middleware("http")
+async def debug_host(request: Request, call_next):
+    print("DEBUG HOST:", request.headers.get("host"))
+    print("DEBUG PATH:", request.url.path)
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,
