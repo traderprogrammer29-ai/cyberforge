@@ -69,12 +69,9 @@ app.add_middleware(
 
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=[
-        "localhost",
-        "127.0.0.1",
-        "cyberforge-1-bii6.onrender.com",
-    ],
+    allowed_hosts=["*"],
 )
+
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
